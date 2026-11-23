@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../data/models/safe_card_model.dart';
 
 abstract class CardScannerEvent extends Equatable {
@@ -12,7 +13,7 @@ class StartCardScan extends CardScannerEvent {
   const StartCardScan();
 }
 
-class StopCardScan extends CardScannerEvent{}
+class StopCardScan extends CardScannerEvent {}
 
 class ResetCardScan extends CardScannerEvent {
   const ResetCardScan();

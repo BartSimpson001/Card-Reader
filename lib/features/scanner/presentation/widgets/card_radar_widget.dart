@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class CardRadarWidget extends StatelessWidget {
   final bool isScanning;
 
-  const CardRadarWidget({
-    super.key,
-    required this.isScanning,
-  });
+  const CardRadarWidget({super.key, required this.isScanning});
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +27,9 @@ class CardRadarWidget extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: (isScanning
-                      ? const Color(0xFF1F6FEB)
-                      : Colors.grey.shade800)
-                  .withOpacity(0.25),
+              color:
+                  (isScanning ? const Color(0xFF1F6FEB) : Colors.grey.shade800)
+                      .withOpacity(0.25),
             ),
             child: Icon(
               Icons.contactless_outlined,

@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+
 import '../../data/models/safe_card_model.dart';
 
 class VirtualCardWidget extends StatelessWidget {
   final SafeCardModel card;
 
-  const VirtualCardWidget({
-    super.key,
-    required this.card,
-  });
+  const VirtualCardWidget({super.key, required this.card});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +38,9 @@ class VirtualCardWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                card.isDomesticOnly ? 'For Use Only In India' : 'International Card',
+                card.isDomesticOnly
+                    ? 'For Use Only In India'
+                    : 'International Card',
                 style: TextStyle(
                   fontSize: 10,
                   color: Colors.white.withOpacity(0.85),
@@ -48,13 +48,14 @@ class VirtualCardWidget extends StatelessWidget {
                 ),
               ),
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(Icons.star, color: Colors.orangeAccent, size: 16),
                   const SizedBox(width: 4),
                   Text(
                     card.issuerBank.toUpperCase(),
                     style: const TextStyle(
-                      fontSize: 15,
+                      fontSize: 14,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 1.0,
                       color: Colors.white,
@@ -115,24 +116,34 @@ class VirtualCardWidget extends StatelessWidget {
 
           // Bottom Row: Cardholder Name, Expiry, Network Badge
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    card.cardholderName.toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1.1,
-                      color: Colors.white,
+              // Cardholder name
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      card.cardholderName.toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.1,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+
+              const SizedBox(width: 8),
+
+              // Expiry details
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   if (card.validFrom != null && card.validFrom!.isNotEmpty) ...[
                     _buildExpiryColumn('VALID FROM', card.validFrom!),
@@ -141,6 +152,10 @@ class VirtualCardWidget extends StatelessWidget {
                   _buildExpiryColumn('VALID THRU', card.expiryDate),
                 ],
               ),
+
+              const SizedBox(width: 8),
+
+              // Card network
               Text(
                 _getNetworkName(card.network),
                 style: const TextStyle(

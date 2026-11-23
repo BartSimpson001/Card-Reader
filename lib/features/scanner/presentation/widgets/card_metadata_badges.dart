@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+
 import '../../data/models/safe_card_model.dart';
 
 class CardMetadataBadges extends StatelessWidget {
   final SafeCardModel card;
 
-  const CardMetadataBadges({
-    super.key,
-    required this.card,
-  });
+  const CardMetadataBadges({super.key, required this.card});
 
   @override
   Widget build(BuildContext context) {

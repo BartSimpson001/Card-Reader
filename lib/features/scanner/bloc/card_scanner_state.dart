@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../data/models/safe_card_model.dart';
 
 abstract class CardScannerState extends Equatable {

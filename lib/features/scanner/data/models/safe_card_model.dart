@@ -1,9 +1,4 @@
-enum CardNetworkType {
-  ruPay,
-  visa,
-  mastercard,
-  unknown,
-}
+enum CardNetworkType { ruPay, visa, mastercard, unknown }
 
 class SafeCardModel {
   final CardNetworkType network;
