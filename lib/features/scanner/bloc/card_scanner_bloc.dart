@@ -14,6 +14,7 @@ class CardScannerBloc extends Bloc<CardScannerEvent, CardScannerState> {
     : _nfcService = nfcService ?? NfcBridgeService(),
       super(const CardScannerInitial()) {
     on<StartCardScan>(_onStartScan);
+    on<StopCardScan>(_onStopScan);
     on<ResetCardScan>(_onResetScan);
     on<CardScanCompleted>(_onScanCompleted);
     on<CardScanFailed>(_onScanFailed);
@@ -66,8 +67,40 @@ class CardScannerBloc extends Bloc<CardScannerEvent, CardScannerState> {
       emit(CardScannerSuccess(safeCard));
     } catch (e) {
       await _nfcService.finishSession(errorMessage: e.toString());
-      emit(CardScannerFailure(e.toString().replaceAll('Exception: ', '')));
+      emit(CardScannerFailure(_toUserFriendlyMessage(e)));
     }
+  }
+
+  String _toUserFriendlyMessage(Object error) {
+    final msg = error.toString().toLowerCase();
+
+    if (msg.contains('out of date') ||
+        msg.contains('tag was lost') ||
+        msg.contains('tag is lost') ||
+        msg.contains('transceive fail') ||
+        msg.contains('connection lost')) {
+      return 'Card moved too quickly. Hold it steady against the back.';
+    }
+
+    if (msg.contains('timeout') || msg.contains('timed out')) {
+      return 'Scanning timed out. Tap your card against the phone to scan.';
+    }
+
+    if (msg.contains('not enabled') || msg.contains('disabled')) {
+      return 'NFC is turned off. Please turn on NFC in Settings.';
+    }
+
+    if (msg.contains('no readable payment') ||
+        msg.contains('aid not found') ||
+        msg.contains('not supported')) {
+      return 'Card not recognized as a supported EMV chip.';
+    }
+
+    if (msg.contains('cancel') || msg.contains('stop')) {
+      return 'Scanning stopped.';
+    }
+
+    return 'Could not read card. Please align it near the camera and try again.';
   }
 
   CardNetworkType _mapNetwork(rust_models.CardNetwork network) {
@@ -81,6 +114,14 @@ class CardScannerBloc extends Bloc<CardScannerEvent, CardScannerState> {
       case rust_models.CardNetwork.unknown:
         return CardNetworkType.unknown;
     }
+  }
+
+  Future<void> _onStopScan(
+    StopCardScan event,
+    Emitter<CardScannerState> emit,
+  ) async {
+    await _nfcService.finishSession();
+    emit(const CardScannerInitial());
   }
 
   Future<void> _onResetScan(

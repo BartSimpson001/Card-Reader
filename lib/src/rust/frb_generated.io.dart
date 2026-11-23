@@ -4,6 +4,7 @@
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
 import 'api/models.dart';
+import 'api/p2p.dart';
 import 'api/scanner.dart';
 
 import 'dart:async';
@@ -59,7 +60,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   SafeCardModel dco_decode_safe_card_model(dynamic raw);
 
   @protected
+  SafeP2pMessage dco_decode_safe_p_2_p_message(dynamic raw);
+
+  @protected
   int dco_decode_u_8(dynamic raw);
+
+  @protected
+  void dco_decode_unit(dynamic raw);
 
   @protected
   BigInt dco_decode_usize(dynamic raw);
@@ -95,7 +102,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   SafeCardModel sse_decode_safe_card_model(SseDeserializer deserializer);
 
   @protected
+  SafeP2pMessage sse_decode_safe_p_2_p_message(SseDeserializer deserializer);
+
+  @protected
   int sse_decode_u_8(SseDeserializer deserializer);
+
+  @protected
+  void sse_decode_unit(SseDeserializer deserializer);
 
   @protected
   BigInt sse_decode_usize(SseDeserializer deserializer);
@@ -144,7 +157,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_safe_card_model(SafeCardModel self, SseSerializer serializer);
 
   @protected
+  void sse_encode_safe_p_2_p_message(
+    SafeP2pMessage self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_u_8(int self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_unit(void self, SseSerializer serializer);
 
   @protected
   void sse_encode_usize(BigInt self, SseSerializer serializer);

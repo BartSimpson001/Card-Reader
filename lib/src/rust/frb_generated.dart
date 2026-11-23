@@ -4,6 +4,7 @@
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
 import 'api/models.dart';
+import 'api/p2p.dart';
 import 'api/scanner.dart';
 
 import 'dart:async';
@@ -68,7 +69,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.13.0';
 
   @override
-  int get rustContentHash => 1113126084;
+  int get rustContentHash => 856033932;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -80,6 +81,15 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
+  Future<Uint8List> crateApiP2PEncodeP2PPayload({
+    required String message,
+    required String deviceName,
+  });
+
+  Future<SafeP2pMessage> crateApiP2PReceiveP2PMessage({
+    required FutureOr<Uint8List> Function(Uint8List) transceiver,
+  });
+
   Future<SafeCardModel> crateApiScannerScanEmvCard({
     required FutureOr<Uint8List> Function(Uint8List) transceiver,
   });
@@ -92,6 +102,77 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     required super.generalizedFrbRustBinding,
     required super.portManager,
   });
+
+  @override
+  Future<Uint8List> crateApiP2PEncodeP2PPayload({
+    required String message,
+    required String deviceName,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(message, serializer);
+          sse_encode_String(deviceName, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 1,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_prim_u_8_strict,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiP2PEncodeP2PPayloadConstMeta,
+        argValues: [message, deviceName],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiP2PEncodeP2PPayloadConstMeta =>
+      const TaskConstMeta(
+        debugName: "encode_p2p_payload",
+        argNames: ["message", "deviceName"],
+      );
+
+  @override
+  Future<SafeP2pMessage> crateApiP2PReceiveP2PMessage({
+    required FutureOr<Uint8List> Function(Uint8List) transceiver,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_DartFn_Inputs_list_prim_u_8_strict_Output_list_prim_u_8_strict_AnyhowException(
+            transceiver,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 2,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_safe_p_2_p_message,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiP2PReceiveP2PMessageConstMeta,
+        argValues: [transceiver],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiP2PReceiveP2PMessageConstMeta =>
+      const TaskConstMeta(
+        debugName: "receive_p2p_message",
+        argNames: ["transceiver"],
+      );
 
   @override
   Future<SafeCardModel> crateApiScannerScanEmvCard({
@@ -108,7 +189,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 1,
+            funcId: 3,
             port: port_,
           );
         },
@@ -247,9 +328,27 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  SafeP2pMessage dco_decode_safe_p_2_p_message(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return SafeP2pMessage(
+      message: dco_decode_String(arr[0]),
+      deviceName: dco_decode_String(arr[1]),
+    );
+  }
+
+  @protected
   int dco_decode_u_8(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
+  }
+
+  @protected
+  void dco_decode_unit(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return;
   }
 
   @protected
@@ -350,9 +449,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  SafeP2pMessage sse_decode_safe_p_2_p_message(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_message = sse_decode_String(deserializer);
+    var var_deviceName = sse_decode_String(deserializer);
+    return SafeP2pMessage(message: var_message, deviceName: var_deviceName);
+  }
+
+  @protected
   int sse_decode_u_8(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint8();
+  }
+
+  @protected
+  void sse_decode_unit(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
   }
 
   @protected
@@ -469,9 +581,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_safe_p_2_p_message(
+    SafeP2pMessage self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.message, serializer);
+    sse_encode_String(self.deviceName, serializer);
+  }
+
+  @protected
   void sse_encode_u_8(int self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putUint8(self);
+  }
+
+  @protected
+  void sse_encode_unit(void self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
   }
 
   @protected

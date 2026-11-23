@@ -2,6 +2,7 @@ import 'package:card_reader/src/rust/frb_generated.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'features/p2p/bloc/p2p_bloc.dart';
 import 'features/scanner/bloc/card_scanner_bloc.dart';
 import 'features/scanner/presentation/screens/card_scanner_screen.dart';
 
@@ -21,8 +22,11 @@ class CardReaderApp extends StatelessWidget {
       title: 'Safe Card Reader',
       theme: ThemeData.dark(useMaterial3: true)
           .copyWith(scaffoldBackgroundColor: const Color(0xFF0D1117)),
-      home: BlocProvider(
-        create: (_) => CardScannerBloc(),
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => CardScannerBloc()),
+          BlocProvider(create: (_) => P2pBloc()),
+        ],
         child: const CardScannerScreen(),
       ),
     );
