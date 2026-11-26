@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../src/rust/api/p2p.dart';
+import '../../../core/p2p/p2p_packet.dart';
 
 abstract class P2pState extends Equatable {
   const P2pState();

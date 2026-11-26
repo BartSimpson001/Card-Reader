@@ -57,7 +57,10 @@ class CardScannerScreen extends StatelessWidget {
                           Expanded(
                             child: Text(
                               '${state.card.issuerBank} card read successfully!',
-                              style: const TextStyle(fontWeight: FontWeight.w600),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ],
@@ -83,7 +86,15 @@ class CardScannerScreen extends StatelessWidget {
                             size: 20,
                           ),
                           const SizedBox(width: 10),
-                          Expanded(child: Text(state.errorMessage)),
+                          Expanded(
+                            child: Text(
+                              state.errorMessage,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                       backgroundColor: const Color(0xFF2A1515),
@@ -298,17 +309,66 @@ class _P2PSendViewState extends State<P2PSendView> {
           if (_msgController.text != state.message) {
             _msgController.text = state.message;
           }
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Broadcasting "${state.message}" via NFC on tap!'),
-              backgroundColor: Colors.green,
+              content: Row(
+                children: [
+                  const Icon(
+                    Icons.sensors_rounded,
+                    color: Colors.greenAccent,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Broadcasting "${state.message}" via NFC on tap!',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: const Color(0xFF161B22),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(color: Colors.greenAccent.withOpacity(0.4)),
+              ),
+              duration: const Duration(seconds: 3),
             ),
           );
         } else if (state is P2pFailure) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage),
-              backgroundColor: Colors.redAccent,
+              content: Row(
+                children: [
+                  const Icon(
+                    Icons.error_outline_rounded,
+                    color: Colors.redAccent,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      state.errorMessage,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: const Color(0xFF2A1515),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(color: Colors.redAccent.withOpacity(0.4)),
+              ),
             ),
           );
         }
@@ -437,12 +497,34 @@ class _P2PSendViewState extends State<P2PSendView> {
                 onPressed: () {
                   final payload = _msgController.text.trim();
                   if (payload.isEmpty) {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Please enter a phone number or text first',
+                      SnackBar(
+                        content: const Row(
+                          children: [
+                            Icon(
+                              Icons.warning_amber_rounded,
+                              color: Colors.amberAccent,
+                              size: 20,
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                'Please enter a phone number or text first',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        backgroundColor: Colors.orangeAccent,
+                        backgroundColor: const Color(0xFF261D10),
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(color: Colors.amberAccent.withOpacity(0.4)),
+                        ),
                       ),
                     );
                     return;
@@ -509,7 +591,10 @@ class P2PReceiveView extends StatelessWidget {
                   Expanded(
                     child: Text(
                       'Received from ${state.data.deviceName}: "${state.data.message}"',
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],
@@ -535,7 +620,15 @@ class P2PReceiveView extends StatelessWidget {
                     size: 20,
                   ),
                   const SizedBox(width: 10),
-                  Expanded(child: Text(state.errorMessage)),
+                  Expanded(
+                    child: Text(
+                      state.errorMessage,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
                 ],
               ),
               backgroundColor: const Color(0xFF2A1515),
@@ -612,10 +705,35 @@ class P2PReceiveView extends StatelessWidget {
                               Clipboard.setData(
                                 ClipboardData(text: state.data.message),
                               );
+                              ScaffoldMessenger.of(context).hideCurrentSnackBar();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Copied to clipboard!'),
-                                  backgroundColor: Colors.blueAccent,
+                                SnackBar(
+                                  content: const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.check_circle_outline_rounded,
+                                        color: Colors.lightBlueAccent,
+                                        size: 20,
+                                      ),
+                                      SizedBox(width: 10),
+                                      Text(
+                                        'Copied to clipboard!',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  backgroundColor: const Color(0xFF13233A),
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    side: BorderSide(
+                                      color: Colors.lightBlueAccent.withOpacity(0.4),
+                                    ),
+                                  ),
+                                  duration: const Duration(seconds: 2),
                                 ),
                               );
                             },

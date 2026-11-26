@@ -1,4 +1,3 @@
-import 'package:card_reader/src/rust/frb_generated.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -6,9 +5,8 @@ import 'features/p2p/bloc/p2p_bloc.dart';
 import 'features/scanner/bloc/card_scanner_bloc.dart';
 import 'features/scanner/presentation/screens/card_scanner_screen.dart';
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await RustLib.init();
   runApp(const CardReaderApp());
 }
 
@@ -20,8 +18,18 @@ class CardReaderApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Safe Card Reader',
-      theme: ThemeData.dark(useMaterial3: true)
-          .copyWith(scaffoldBackgroundColor: const Color(0xFF0D1117)),
+      theme: ThemeData.dark(useMaterial3: true).copyWith(
+        scaffoldBackgroundColor: const Color(0xFF0D1117),
+        snackBarTheme: const SnackBarThemeData(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Color(0xFF161B22),
+          contentTextStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
       home: MultiBlocProvider(
         providers: [
           BlocProvider(create: (_) => CardScannerBloc()),
